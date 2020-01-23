@@ -1,0 +1,21 @@
+package(default_visibility = ["//visibility:public"])
+
+licenses(["notice"])
+
+load("@subpar//:subpar.bzl", "par_binary")
+
+exports_files([
+  "release.sh.tpl",
+])
+
+par_binary(
+  name = "stamper",
+  srcs = ["stamper.py"],
+  visibility = ["//visibility:public"],
+)
+
+par_binary(
+  name = "release",
+  srcs = ["release.py"],
+  visibility = ["//visibility:public"],
+)
