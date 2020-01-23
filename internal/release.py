@@ -51,7 +51,6 @@ def update_field(dictionary, path, value):
         current = current.get(key)
     if current[last].__class__ == unicode:
         value = str(value)
-
     current[last] = value
 
     return dictionary
@@ -63,21 +62,19 @@ def main():
     output_list = args.output
 
     for index, file in enumerate(files_list,start=0):
-        with open(file,'r+') as json_file:
+        with open(file,'r') as json_file:
 
             _json = json.load(json_file)
 
             if args.substitution:
-                for sub in args.substitution:
-                    subs = sub.split("=")
-                    update_field(_json, subs[0], subs[1])
+                for substitution in args.substitution:
+                    sub = substitution.split("=")
+                    update_field(_json, sub[0], sub[1])
 
             if args.increment:
-                for inc in args.increment:
-                    inc = inc.split("=")
+                for increment in args.increment:
+                    inc = increment.split("=")
                     update_field(_json,inc[0],int(read_field(_json, inc[0])) + int(inc[1]))
-
-            json_file.seek(0) # Clear file.
 
             with open(output_list[index], 'w') as outfile:
                 json.dump(_json, outfile, sort_keys=True, indent=2, separators=(',', ': '))
