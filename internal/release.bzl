@@ -35,7 +35,7 @@ def _release_impl(ctx):
 
   for src in ctx.files.release_files:
     out_file = ctx.actions.declare_file(src.basename + "-generated")
-    ctx.actions.write(output = out_file, content = "The content will be here when the BAZEL RUN is executed ...")
+    ctx.actions.write(output = out_file, content = "The content will be here when the BAZEL RUN is executed...\n")
     outfiles.append(out_file)
     args.append("--file=%s" % _runfile(ctx,src))
     args.append("--output=%s" % _runfile(ctx,out_file))

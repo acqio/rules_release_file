@@ -62,13 +62,16 @@ def main():
         with open(file,'r+') as json_file:
 
             _json = json.load(json_file)
-            for sub in args.substitution:
-                subs = sub.split("=")
-                update_field(_json, subs[0], subs[1])
 
-            for inc in args.increment:
-                inc = inc.split("=")
-                update_field(_json,inc[0],int(read_field(_json, inc[0])) + int(inc[1]))
+            if args.substitution:
+                for sub in args.substitution:
+                    subs = sub.split("=")
+                    update_field(_json, subs[0], subs[1])
+
+            if args.increment:
+                for inc in args.increment:
+                    inc = inc.split("=")
+                    update_field(_json,inc[0],int(read_field(_json, inc[0])) + int(inc[1]))
 
             json_file.seek(0) # Clear file.
 

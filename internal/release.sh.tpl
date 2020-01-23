@@ -25,6 +25,5 @@ function exe() { echo "\$ ${@/eval/}" ; "$@" ; }
 
 RUNFILES="$(guess_runfiles)"
 
-echo ${RUNFILES}
 %{release_tool} %{args}
 %{copyfiles}
