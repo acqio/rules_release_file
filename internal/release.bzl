@@ -1,12 +1,4 @@
-def _get_runfile_path(ctx, f):
-  """Return the runfiles relative path of f."""
-  if ctx.workspace_name:
-    return ctx.workspace_name + "/" + f.short_path
-  else:
-    return f.short_path
-
-def _runfile(ctx, f):
-  return "${RUNFILES}/%s" % _get_runfile_path(ctx, f)
+load("//internal:util.bzl", "runfile")
 
 def _resolve_stamp(ctx, string, output):
     stamps = [ctx.info_file, ctx.version_file]
@@ -37,20 +29,20 @@ def _release_impl(ctx):
     out_file = ctx.actions.declare_file(src.basename + "-generated")
     ctx.actions.write(output = out_file, content = "The content will be here when the BAZEL RUN is executed...\n")
     outfiles.append(out_file)
-    args.append("--file=%s" % _runfile(ctx,src))
-    args.append("--output=%s" % _runfile(ctx,out_file))
+    args.append("--file=%s" % runfile(ctx,src))
+    args.append("--output=%s" % runfile(ctx,out_file))
     runfiles.append(out_file)
     runfiles.append(src)
 
     if ctx.attr.copy:
-      copyfiles.append("cp -f %s $BUILD_WORKSPACE_DIRECTORY/%s" % (_runfile(ctx,out_file), src.path))
+      copyfiles.append("cp -f %s $BUILD_WORKSPACE_DIRECTORY/%s" % (runfile(ctx,out_file), src.path))
 
   for (key, value) in ctx.attr.substitutions.items():
     if "{" in value:
       stamp_file = ctx.actions.declare_file(key + "-stamp")
       _resolve_stamp(ctx, value, stamp_file)
       runfiles.append(stamp_file)
-      args.append("--substitution=%s=$(cat %s)" % (key, _runfile(ctx, stamp_file)))
+      args.append("--substitution=%s=$(cat %s)" % (key, runfile(ctx, stamp_file)))
     else:
       args.append("--substitution=%s=%s" % (key,value))
 
@@ -60,7 +52,7 @@ def _release_impl(ctx):
   ctx.actions.expand_template(
     template = ctx.file._template,
     substitutions = {
-      "%{release_tool}": _runfile(ctx, ctx.executable._release_tool),
+      "%{release_tool}": runfile(ctx, ctx.executable._release_tool),
       "%{args}": ' '.join(args) + ";",
       "%{copyfiles}": '; '.join(copyfiles)
     },
