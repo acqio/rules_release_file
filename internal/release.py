@@ -49,7 +49,11 @@ def update_field(dictionary, path, value):
     current = dictionary
     for key in keys:
         current = current.get(key)
+    if current[last].__class__ == unicode:
+        value = str(value)
+
     current[last] = value
+
     return dictionary
 
 def main():
