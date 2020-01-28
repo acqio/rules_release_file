@@ -20,20 +20,17 @@ import os
 
 parser = argparse.ArgumentParser(description='Resolve stamp references.')
 
-parser.add_argument('--file', action='append',
+parser.add_argument('--file', action='append', metavar="KEY=VALUE",
                     help='The release file that will be the base for the new release file.')
 
-parser.add_argument('--output', action='append',
+parser.add_argument('--output', action='append', metavar="KEY=VALUE",
                     help='The new release file.')
 
-parser.add_argument('--substitution', action='append',
-                    help='The key and value to substitution. e.g. expo.version={STABLE_GIT_COMMIT}')
+parser.add_argument('--substitution', action='append', metavar="KEY=VALUE",
+                    help='The key and value to substitution. e.g. expo.version=path/to/file/with/value')
 
-parser.add_argument('--increment', action='append',
+parser.add_argument('--increment', action='append', metavar="KEY=VALUE",
                     help='The key and value to increment.')
-
-parser.add_argument('--output_to_workspce', action='store',
-                    help='Copy output file to workspace bazel project.')
 
 def read_field(dictionary, path):
     keys = path.split(".")
@@ -41,6 +38,13 @@ def read_field(dictionary, path):
     for key in keys:
         current = current.get(key)
     return current
+
+def read_file_content(path):
+    try:
+        with open(path) as f:
+            return f.read()
+    except IOError:
+        print("File not accessible")
 
 def update_field(dictionary, path, value):
     keys = path.split(".")
@@ -55,6 +59,23 @@ def update_field(dictionary, path, value):
 
     return dictionary
 
+def parse_var(s):
+    """
+    Parse a key, value pair, separated by '='
+    That's the reverse of ShellArgs.
+
+    On the command line (argparse) a declaration will typically look like:
+        foo=hello
+    or
+        foo="hello world"
+    """
+    items = s.split('=')
+    key = items[0].strip() # we remove blanks around keys, as is logical
+    if len(items) > 1:
+        # rejoin the rest:
+        value = '='.join(items[1:])
+    return (key, value)
+
 def main():
 
     args = parser.parse_args()
@@ -68,12 +89,12 @@ def main():
 
             if args.substitution:
                 for substitution in args.substitution:
-                    sub = substitution.split("=")
-                    update_field(_json, sub[0], sub[1])
+                    sub = parse_var(substitution)
+                    update_field(_json, sub[0], read_file_content(sub[1]))
 
             if args.increment:
                 for increment in args.increment:
-                    inc = increment.split("=")
+                    inc = parse_var(increment)
                     update_field(_json,inc[0],int(read_field(_json, inc[0])) + int(inc[1]))
 
             with open(output_list[index], 'w') as outfile:

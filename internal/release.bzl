@@ -1,60 +1,55 @@
-load("//internal:util.bzl", "runfile")
-
-def _resolve_stamp(ctx, string, output):
-    stamps = [ctx.info_file, ctx.version_file]
-    args = ctx.actions.args()
-    args.add_all(stamps, format_each = "--stamp-info-file=%s")
-    args.add(string, format = "--format=%s")
-    args.add(output, format = "--output=%s")
-    ctx.actions.run(
-        executable = ctx.executable._stamper,
-        arguments = [args],
-        inputs = stamps,
-        tools = [ctx.executable._stamper],
-        outputs = [output],
-        mnemonic = "Stamp",
-    )
+load("//internal:utils.bzl", "runfile", "resolve_stamp")
 
 def _release_impl(ctx):
 
   runfiles=[]
   outfiles=[]
-  copyfiles=[]
-  args=[]
-
-  runfiles.append(ctx.executable._release_tool)
-  runfiles.append(ctx.file._template)
+  tpl_cmd=[]
+  args=ctx.actions.args()
 
   for src in ctx.files.release_files:
-    out_file = ctx.actions.declare_file(src.basename + "-generated")
-    ctx.actions.write(output = out_file, content = "The content will be here when the BAZEL RUN is executed...\n")
-    outfiles.append(out_file)
-    args.append("--file=%s" % runfile(ctx,src))
-    args.append("--output=%s" % runfile(ctx,out_file))
-    runfiles.append(out_file)
+    out_file = ctx.actions.declare_file(src.basename + ".generated")
+    args.add("--file", src.path)
+    args.add("--output", out_file.path)
     runfiles.append(src)
-
-    if ctx.attr.copy:
-      copyfiles.append("cp -f %s $BUILD_WORKSPACE_DIRECTORY/%s" % (runfile(ctx,out_file), src.path))
+    outfiles.append(out_file)
+    if ctx.attr.apply:
+      tpl_cmd.append("cp -f %s $BUILD_WORKSPACE_DIRECTORY/%s" % (runfile(ctx,out_file), src.path))
 
   for (key, value) in ctx.attr.substitutions.items():
-    if "{" in value:
-      stamp_file = ctx.actions.declare_file(key + "-stamp")
-      _resolve_stamp(ctx, value, stamp_file)
-      runfiles.append(stamp_file)
-      args.append("--substitution=%s=$(cat %s)" % (key, runfile(ctx, stamp_file)))
+
+    if key.strip() or value.strip():
+      substitution_file = ctx.actions.declare_file(key + ".substitution")
+      runfiles.append(substitution_file)
+
+      if "{" in value:
+        resolve_stamp(ctx, value, substitution_file)
+      else:
+        ctx.actions.write(substitution_file, value)
+
+      args.add("--substitution", "%s=%s" % (key, substitution_file.path))
     else:
-      args.append("--substitution=%s=%s" % (key,value))
+      fail("The dictionary key or value cannot be empty.\n%s" % str(ctx.attr.substitutions))
 
   for (key, value) in ctx.attr.increments.items():
-    args.append("--increment=%s=%s" % (key,value))
+
+    if key.strip() or value.strip():
+      args.add("--increment", "%s=%s" % (key, value))
+    else:
+      fail("The dictionary key or value cannot be empty.\n%s" % str(ctx.attr.increments))
+
+  ctx.actions.run(
+    inputs = runfiles,
+    outputs = outfiles,
+    executable = ctx.executable._release_tool,
+    tools = [ctx.executable._release_tool],
+    arguments = [args]
+  )
 
   ctx.actions.expand_template(
     template = ctx.file._template,
     substitutions = {
-      "%{release_tool}": runfile(ctx, ctx.executable._release_tool),
-      "%{args}": ' '.join(args) + ";",
-      "%{copyfiles}": '; '.join(copyfiles)
+      "%{tpl_cmd}": '; '.join(tpl_cmd)
     },
     output = ctx.outputs.executable,
     is_executable = True,
@@ -64,9 +59,9 @@ def _release_impl(ctx):
       DefaultInfo(
           runfiles = ctx.runfiles(
               files = runfiles,
+              transitive_files = depset(outfiles)
           ),
           files = depset(outfiles),
-          executable = ctx.outputs.executable
       ),
   ]
 
@@ -80,13 +75,9 @@ _release = rule(
         allow_empty = False,
         allow_files = [".json"]
       ),
-      "substitutions": attr.string_dict(
-        allow_empty = False
-      ),
-      "increments": attr.string_dict(
-        allow_empty = False
-      ),
-      "copy": attr.bool(
+      "substitutions": attr.string_dict(),
+      "increments": attr.string_dict(),
+      "apply": attr.bool(
         default = False
       ),
       "_stamper": attr.label(
@@ -109,4 +100,4 @@ _release = rule(
 
 def release(name, **kwargs):
   _release(name=name, **kwargs)
-  _release(name=name+'.copy', copy=True, **kwargs)
+  _release(name=name+'.apply', apply=True, **kwargs)

@@ -21,9 +21,6 @@ function guess_runfiles() {
     popd > /dev/null 2>&1
 }
 
-function exe() { echo "\$ ${@/eval/}" ; "$@" ; }
-
 RUNFILES="$(guess_runfiles)"
 
-%{release_tool} %{args}
-%{copyfiles}
+%{tpl_cmd}
