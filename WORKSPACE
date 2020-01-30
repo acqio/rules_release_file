@@ -1,4 +1,4 @@
-workspace(name = "rules_release")
+workspace(name = "rules_release_file")
 
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
