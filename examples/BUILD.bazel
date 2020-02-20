@@ -1,0 +1,16 @@
+package(default_visibility = ['//visibility:public'])
+load("@rules_release_file//:index.bzl", "release")
+
+release(
+  name = "release",
+  release_files = [
+    "app.json",
+  ],
+  substitutions = {
+    "foo.version" : "{BUILD_TIMESTAMP}",
+  },
+  increments = {
+    "foo.bar.Code" : "1",
+    "foo.baz.Number" : "1"
+  },
+)

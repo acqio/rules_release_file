@@ -1,21 +1,43 @@
+# Copyright 2017 The Bazel Authors. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+load("@subpar//:subpar.bzl", "par_binary")
 package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])
-
-load("@subpar//:subpar.bzl", "par_binary")
 
 exports_files([
   "release.sh.tpl",
 ])
 
+py_runtime(
+    name = "py_runtime",
+    interpreter_path = select({
+        "@bazel_tools//tools/python:PY2": "/usr/bin/python2",
+        "@bazel_tools//tools/python:PY3": "/usr/bin/python3",
+    }),
+)
+
 par_binary(
   name = "stamper",
   srcs = ["stamper.py"],
+  python_version = "PY2",
   visibility = ["//visibility:public"],
 )
 
 par_binary(
   name = "release",
   srcs = ["release.py"],
+  python_version = "PY2",
   visibility = ["//visibility:public"],
 )
