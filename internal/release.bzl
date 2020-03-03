@@ -7,7 +7,7 @@ def _release_impl(ctx):
   tpl_cmd=[]
   args=ctx.actions.args()
 
-  for src in ctx.files.release_files:
+  for src in ctx.files.files:
     out_file = ctx.actions.declare_file(src.basename + ".generated")
     args.add("--file", src.path)
     args.add("--output", out_file.path)
@@ -70,7 +70,7 @@ _release = rule(
   executable = True,
   attrs = dict(
     {
-      "release_files": attr.label_list(
+      "files": attr.label_list(
         mandatory = True,
         allow_empty = False,
         allow_files = [".json"]
