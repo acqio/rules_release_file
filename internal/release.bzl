@@ -1,20 +1,43 @@
 load("//internal:utils.bzl", "runfile", "resolve_stamp")
+load("@bazel_skylib//lib:dicts.bzl", "dicts")
 
+_common_attr = dict(
+  {
+    "files": attr.label_list(
+      mandatory = True,
+      allow_empty = False,
+      allow_files = [".json"]),
+    "substitutions": attr.string_dict(),
+    "increments": attr.string_dict(),
+    "_stamper": attr.label(
+      default = Label("//internal:stamper"),
+      cfg = "host",
+      executable = True),
+    "_release_tool": attr.label(
+      default = Label("//internal:release.par"),
+      cfg = "host",
+      executable = True),
+    "_template": attr.label(
+      default = Label("//internal:release.sh.tpl"),
+      allow_single_file = True),
+  }
+)
 def _release_impl(ctx):
 
   runfiles=[]
   outfiles=[]
-  tpl_cmd=[]
+  CMD=[]
   args=ctx.actions.args()
 
   for src in ctx.files.files:
     out_file = ctx.actions.declare_file(src.basename + ".generated")
     args.add("--file", src.path)
     args.add("--output", out_file.path)
-    runfiles.append(src)
     outfiles.append(out_file)
-    if ctx.attr.apply:
-      tpl_cmd.append("cp -f %s $BUILD_WORKSPACE_DIRECTORY/%s" % (runfile(ctx,out_file), src.path))
+    if ctx.attr._apply:
+      CMD.append("cp -f %s $BUILD_WORKSPACE_DIRECTORY/%s" % (runfile(ctx,out_file), src.path))
+
+  runfiles+= ctx.files.files
 
   for (key, value) in ctx.attr.substitutions.items():
 
@@ -49,7 +72,7 @@ def _release_impl(ctx):
   ctx.actions.expand_template(
     template = ctx.file._template,
     substitutions = {
-      "%{tpl_cmd}": '; '.join(tpl_cmd)
+      "%{CMD}": ' && '.join(CMD)
     },
     output = ctx.outputs.executable,
     is_executable = True,
@@ -61,43 +84,36 @@ def _release_impl(ctx):
               files = runfiles,
               transitive_files = depset(outfiles)
           ),
-          files = depset(outfiles),
+          files = depset(outfiles + [ctx.outputs.executable]),
       ),
   ]
 
 _release = rule(
   implementation = _release_impl,
   executable = True,
-  attrs = dict(
-    {
-      "files": attr.label_list(
-        mandatory = True,
-        allow_empty = False,
-        allow_files = [".json"]
-      ),
-      "substitutions": attr.string_dict(),
-      "increments": attr.string_dict(),
-      "apply": attr.bool(
+  attrs = dicts.add(
+    _common_attr,
+    dict({
+      "_apply": attr.bool(
         default = False
-      ),
-      "_stamper": attr.label(
-        default = Label("//internal:stamper"),
-        cfg = "host",
-        executable = True,
-      ),
-      "_release_tool": attr.label(
-        default = Label("//internal:release.par"),
-        cfg = "host",
-        executable = True,
-      ),
-      "_template": attr.label(
-        default = Label("//internal:release.sh.tpl"),
-        allow_single_file = True,
-      ),
-    },
+      )}
+    )
+  ),
+)
+
+_release_apply = rule(
+  implementation = _release_impl,
+  executable = True,
+  attrs = dicts.add(
+    _common_attr,
+    dict({
+      "_apply": attr.bool(
+        default = True
+      )}
+    )
   ),
 )
 
 def release(name, **kwargs):
   _release(name=name, **kwargs)
-  _release(name=name+'.apply', apply=True, **kwargs)
+  _release_apply(name=name+'.apply', **kwargs)

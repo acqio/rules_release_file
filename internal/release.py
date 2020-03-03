@@ -40,11 +40,7 @@ def read_field(dictionary, path):
     return current
 
 def read_file_content(path):
-    try:
-        with open(path) as f:
-            return f.read()
-    except IOError:
-        print("File not accessible")
+    with open(path) as f: return f.read()
 
 def update_field(dictionary, path, value):
     keys = path.split(".")

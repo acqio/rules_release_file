@@ -3,7 +3,7 @@ load("@rules_release_file//:index.bzl", "release")
 
 release(
   name = "release",
-  release_files = [
+  files = [
     "app.json",
   ],
   substitutions = {

@@ -17,19 +17,16 @@ Add the following to your `WORKSPACE` file to add the necessary external depende
 ```python
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-# This requires that python be available in your distribution,
-# as this project uses rules_python to build the binary databricks cli.
-# Download the rules_databricks repository at release v0.1
-
 http_archive(
     name = "rules_release_file",
     sha256 = "cc75cf0d86312e1327d226e980efd3599704e01099b58b3c2fc4efe5e321fcd9",
-    strip_prefix = "rules_databricks-0.1",
+    strip_prefix = "rules_release_file-0.1",
     urls = [
-        "https://github.com/bazelbuild/rules_databricks/releases/download/v0.1/rules_databricks-v0.1.tar.gz"
+        "https://github.com/jullianow/rules_release_file/releases/download/v0.1/rules_release_file-v0.1.tar.gz"
     ],
 )
 
+load("@rules_release_file//:repositories.bzl", "repositories")
 ```
 
 ## Rules

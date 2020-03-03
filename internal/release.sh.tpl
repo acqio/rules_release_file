@@ -23,4 +23,4 @@ function guess_runfiles() {
 
 RUNFILES="$(guess_runfiles)"
 
-%{tpl_cmd}
+%{CMD}
