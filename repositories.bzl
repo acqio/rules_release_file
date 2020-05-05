@@ -21,31 +21,28 @@ def repositories():
     excludes = native.existing_rules().keys()
 
     if "bazel_skylib" not in excludes:
-
         http_archive(
             name = "bazel_skylib",
             sha256 = "e5d90f0ec952883d56747b7604e2a15ee36e288bb556c3d0ed33e818a4d971f2",
             strip_prefix = "bazel-skylib-1.0.2",
             urls = [
-                "https://github.com/bazelbuild/bazel-skylib/archive/1.0.2.tar.gz"
+                "https://github.com/bazelbuild/bazel-skylib/archive/1.0.2.tar.gz",
             ],
         )
 
     if "rules_python" not in excludes:
-
         http_archive(
             name = "rules_python",
             sha256 = "aa96a691d3a8177f3215b14b0edc9641787abaaa30363a080165d06ab65e1161",
             urls = [
-                "https://github.com/bazelbuild/rules_python/releases/download/0.0.1/rules_python-0.0.1.tar.gz"
+                "https://github.com/bazelbuild/rules_python/releases/download/0.0.1/rules_python-0.0.1.tar.gz",
             ],
         )
 
     if "subpar" not in excludes:
-
         git_repository(
             name = "subpar",
             remote = "https://github.com/google/subpar",
             commit = "9fae6b63cfeace2e0fb93c9c1ebdc28d3991b16f",
-            shallow_since = "1565833028 -0400"
+            shallow_since = "1565833028 -0400",
         )

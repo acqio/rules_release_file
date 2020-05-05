@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 load("@subpar//:subpar.bzl", "par_binary")
+
 package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])
 
 exports_files([
-  "release.sh.tpl",
+    "release.sh.tpl",
 ])
 
 py_runtime(
@@ -29,15 +30,15 @@ py_runtime(
 )
 
 par_binary(
-  name = "stamper",
-  srcs = ["stamper.py"],
-  python_version = "PY2",
-  visibility = ["//visibility:public"],
+    name = "stamper",
+    srcs = ["stamper.py"],
+    python_version = "PY2",
+    visibility = ["//visibility:public"],
 )
 
 par_binary(
-  name = "release",
-  srcs = ["release.py"],
-  python_version = "PY2",
-  visibility = ["//visibility:public"],
+    name = "release",
+    srcs = ["release.py"],
+    python_version = "PY2",
+    visibility = ["//visibility:public"],
 )
