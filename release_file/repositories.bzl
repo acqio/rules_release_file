@@ -31,12 +31,11 @@ def repositories():
         )
 
     if "rules_python" not in excludes:
-        http_archive(
+        git_repository(
             name = "rules_python",
-            sha256 = "aa96a691d3a8177f3215b14b0edc9641787abaaa30363a080165d06ab65e1161",
-            urls = [
-                "https://github.com/bazelbuild/rules_python/releases/download/0.0.1/rules_python-0.0.1.tar.gz",
-            ],
+            remote = "https://github.com/bazelbuild/rules_python/",
+            commit = "708ed8679d7510a331ce9a7b910a2a056d24f7b1",
+            shallow_since = "1590213058 +1000",
         )
 
     if "subpar" not in excludes:

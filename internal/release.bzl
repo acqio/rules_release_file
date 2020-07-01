@@ -1,5 +1,5 @@
-load("//internal:utils.bzl", "resolve_stamp", "runfile")
 load("@bazel_skylib//lib:dicts.bzl", "dicts")
+load("//internal:utils.bzl", "resolve_stamp", "runfile")
 
 _common_attr = dict(
     {
@@ -35,6 +35,7 @@ def _release_impl(ctx):
 
     for src in ctx.files.files:
         out_file = ctx.actions.declare_file(src.basename + ".generated")
+        print(src)
         args.add("--file", src.path)
         args.add("--output", out_file.path)
         outfiles.append(out_file)
