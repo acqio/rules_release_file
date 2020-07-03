@@ -19,14 +19,25 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "rules_release_file",
-    sha256 = "a0028c81e1cb4a64297bb549a3fa1cbada5199a50b6b957c49262ed5b27243c1",
-    strip_prefix = "rules_release_file-0.1",
+    sha256 = "ea23e5bf938b226327420752b33b1c29f218aa6b2e5a93a712203a8e23ed6636",
+    strip_prefix = "rules_release_file-0.2",
     urls = [
-        "https://github.com/jullianow/rules_release_file/archive/v0.1.tar.gz"
+        "https://github.com/jullianow/rules_release_file/archive/v0.2.tar.gz"
     ],
 )
 
-load("@rules_release_file//:repositories.bzl", "repositories")
+load("@rules_release_file//release_file:repositories.bzl", release_files_repositories = "repositories")
+
+release_files_repositories()
+
+load("@rules_release_file//release_file:deps.bzl", release_files_deps = "deps")
+
+release_files_deps()
+
+load("@rules_release_file//release_file:pip_repositories.bzl", release_file_pip_deps = "pip_deps")
+
+release_file_pip_deps()
+
 ```
 
 ## Rules
