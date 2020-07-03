@@ -8,6 +8,16 @@ def _get_runfile_path(ctx, f):
 def runfile(ctx, f):
     return "${RUNFILES}/%s" % _get_runfile_path(ctx, f)
 
+def validate_stamp(stamp):
+    if not (
+            (
+                stamp.count('{') == 1 and stamp.rindex("{") == 0) and (
+                stamp.count('}') == 1 and stamp.rindex("}") == stamp.find('}')
+            )
+        ):
+        fail ("The stamp string is badly formatted (eg {NAME}):\n" + str(stamp))
+    return True
+
 def resolve_stamp(ctx, string, output):
     stamps = [ctx.info_file, ctx.version_file]
     args = ctx.actions.args()

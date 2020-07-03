@@ -1,12 +1,13 @@
 load("@bazel_skylib//lib:dicts.bzl", "dicts")
-load("//internal:utils.bzl", "resolve_stamp", "runfile")
+load("@bazel_skylib//lib:paths.bzl", "paths")
+load("//internal:helpers.bzl", "validate_stamp", "resolve_stamp", "runfile",)
 
 _common_attr = dict(
     {
         "files": attr.label_list(
             mandatory = True,
             allow_empty = False,
-            allow_files = [".json"],
+            allow_files = [".json", ".yaml", ".yml"],
         ),
         "substitutions": attr.string_dict(),
         "increments": attr.string_dict(),
@@ -35,7 +36,6 @@ def _release_impl(ctx):
 
     for src in ctx.files.files:
         out_file = ctx.actions.declare_file(src.basename + ".generated")
-        print(src)
         args.add("--file", src.path)
         args.add("--output", out_file.path)
         outfiles.append(out_file)
@@ -49,7 +49,7 @@ def _release_impl(ctx):
             substitution_file = ctx.actions.declare_file(key + ".substitution")
             runfiles.append(substitution_file)
 
-            if "{" in value:
+            if validate_stamp(value):
                 resolve_stamp(ctx, value, substitution_file)
             else:
                 ctx.actions.write(substitution_file, value)

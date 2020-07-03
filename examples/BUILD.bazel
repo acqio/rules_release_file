@@ -1,7 +1,7 @@
 load("@rules_release_file//:index.bzl", "release")
 
 release(
-    name = "release",
+    name = "json_release",
     files = [
         "app.json",
     ],
@@ -10,6 +10,19 @@ release(
         "foo.baz.Number": "1",
     },
     substitutions = {
-        "foo.version": "{BUILD_TIMESTAMP}",
+        "foo.version": "{STABLE_GIT_DATE}",
+    },
+)
+
+release(
+    name = "yaml_release",
+    files = [
+        "app.yaml",
+    ],
+    increments = {
+        "metadata.labels.version": "1",
+    },
+    substitutions = {
+        "metadata.labels.commit": "{STABLE_GIT_COMMIT}",
     },
 )

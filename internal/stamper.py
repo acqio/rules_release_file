@@ -18,10 +18,10 @@ import sys
 
 parser = argparse.ArgumentParser(description='Resolve stamp references.')
 
-parser.add_argument('--format', action='store',
+parser.add_argument('--format', action='store', required=True,
                     help='The format string containing stamp variables.')
 
-parser.add_argument('--output', action='store',
+parser.add_argument('--output', action='store', required=True,
                     help='The filename into which we write the result.')
 
 parser.add_argument('--stamp-info-file', action='append', required=False,
@@ -31,8 +31,8 @@ parser.add_argument('--stamp-info-file', action='append', required=False,
 def main():
   args = parser.parse_args()
 
-  # Read our stamp variable files.
   format_args = {}
+
   for infofile in args.stamp_info_file or []:
     with open(infofile) as info:
       for line in info:

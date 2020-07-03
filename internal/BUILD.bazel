@@ -17,6 +17,8 @@ package(default_visibility = ["//visibility:private"])
 licenses(["notice"])
 
 load("@subpar//:subpar.bzl", "par_binary")
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_release_pip_deps//:requirements.bzl", "requirement")
 
 filegroup(
     name = "all_files",
@@ -39,6 +41,9 @@ par_binary(
 par_binary(
     name = "release",
     srcs = ["release.py"],
+    deps = [
+        requirement("PyYAML"),
+    ],
     python_version = "PY3",
     visibility = ["//visibility:public"],
 )
