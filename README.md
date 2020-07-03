@@ -31,4 +31,4 @@ load("@rules_release_file//:repositories.bzl", "repositories")
 
 ## Rules
 
-* [release](docs/release.md)
+* [release](docs/release.md) ([example](examples/))

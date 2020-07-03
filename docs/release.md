@@ -1,8 +1,8 @@
 <a name="release"></a>
-### release ([example](examples/))
+### release
 
 ```python
-release(name, files, substitutions, increments)
+release(name, files, increments, substitutions)
 ```
 
 <table class="table table-condensed table-bordered table-implicit">
@@ -64,10 +64,7 @@ release(name, files, substitutions, increments)
         <p>The increment unit will be the value defined in the dictionary.</p>
         <p>
           <code>
-            increments = {
-              "path.to.foo": "1",
-           ...
-          },
+            increments = { "path.to.foo": "1", ... },
           </code>
         </p>
       </td>
@@ -80,11 +77,7 @@ release(name, files, substitutions, increments)
         <p>This field supports stamp variables.</p>
         <p>
           <code>
-            substitutions = {
-              "path.to.foo": "{BUILD_TIMESTAMP}",
-              "path.to.bar": "20.02.02",
-           ...
-          },
+            substitutions = { "path.to.foo": "{BUILD_TIMESTAMP}", "path.to.bar": "20.02.02", ... },
           </code>
         </p>
       </td>
