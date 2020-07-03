@@ -1,5 +1,22 @@
 load("@rules_release_file//:index.bzl", "release")
 
+genrule(
+    name = "foo",
+    srcs = [],
+    outs = ["tst.json"],
+    cmd = "echo '{\"key\": 1}' > \"$@\"",
+)
+
+release(
+    name = "foo_release",
+    files = [
+        ":foo",
+    ],
+    increments = {
+        "key": "1",
+    },
+)
+
 release(
     name = "json_release",
     files = [

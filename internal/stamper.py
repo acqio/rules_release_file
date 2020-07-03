@@ -14,7 +14,6 @@
 """Resolve stamp variables."""
 
 import argparse
-import sys
 
 parser = argparse.ArgumentParser(description='Resolve stamp references.')
 
@@ -29,28 +28,26 @@ parser.add_argument('--stamp-info-file', action='append', required=False,
                           'to make in the provided --name, e.g. {BUILD_USER}'))
 
 def main():
-  args = parser.parse_args()
+    args = parser.parse_args()
 
-  format_args = {}
+    format_args = {}
 
-  for infofile in args.stamp_info_file or []:
-    with open(infofile) as info:
-      for line in info:
-        line = line.strip('\n')
-        if not line:
-          continue
-        elts = line.split(' ', 1)
-        if len(elts) != 2:
-          raise Exception('Malformed line: %s' % line)
-        (key, value) = elts
-        if key in format_args:
-          print ('WARNING: Duplicate value for key "%s": '
-                 'using "%s"' % (key, value))
-        format_args[key] = value
+    for infofile in args.stamp_info_file or []:
+        with open(infofile) as info:
+            for line in info:
+                line = line.strip('\n')
+                if not line:
+                    continue
+                elts = line.split(' ', 1)
+                if len(elts) != 2:
+                    raise Exception('Malformed line: %s' % line)
+                (key, value) = elts
+                if key in format_args:
+                    print ('WARNING: Duplicate value for key "%s": using "%s"' % (key, value))
+                format_args[key] = value
 
-  with open(args.output, 'w') as f:
-    f.write(args.format.format(**format_args))
-
+    with open(args.output, 'w') as f:
+        f.write(args.format.format(**format_args))
 
 if __name__ == '__main__':
-  main()
+    main()

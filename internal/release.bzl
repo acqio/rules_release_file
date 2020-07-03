@@ -40,7 +40,10 @@ def _release_impl(ctx):
         args.add("--output", out_file.path)
         outfiles.append(out_file)
         if ctx.attr._apply:
-            CMD.append("cp -f %s $BUILD_WORKSPACE_DIRECTORY/%s" % (runfile(ctx, out_file), src.path))
+            path = src.path
+            if not src.is_source:
+                path = src.short_path
+            CMD.append("cp -f %s $BUILD_WORKSPACE_DIRECTORY/%s" % (runfile(ctx, out_file), path))
 
     runfiles += ctx.files.files
 

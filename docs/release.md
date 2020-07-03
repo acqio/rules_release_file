@@ -1,26 +1,8 @@
 <a name="release"></a>
-### release
+### release ([example](examples/))
 
 ```python
 release(name, files, substitutions, increments)
-```
-
-For example, if the BUILD file contains:
-
-```python
-release(
-  name = "foo"
-  files = [
-      "file.json",
-  ],
-  increments = {
-      "foo.bar.Code": "1",
-      "foo.baz.Number": "1",
-  },
-  substitutions = {
-      "foo.version": "{BUILD_TIMESTAMP}",
-  },
-)
 ```
 
 <table class="table table-condensed table-bordered table-implicit">
@@ -74,23 +56,6 @@ release(
       </td>
     </tr>
     <tr>
-      <td><code>substitutions</code></td>
-      <td>
-        <code>Dictionary from strings to strings, optional</code>
-        <p>Raw substitution of the value of a given document key.</p>
-        <p>This field supports stamp variables.</p>
-        <p>
-          <code>
-            substitutions = {
-              "path.to.foo": "{BUILD_TIMESTAMP}",
-              "path.to.bar": "20.02.02",
-           ...
-          },
-          </code>
-        </p>
-      </td>
-    </tr>
-    <tr>
       <td><code>increments</code></td>
       <td>
         <code>Dictionary from strings to strings, optional</code>
@@ -101,6 +66,23 @@ release(
           <code>
             increments = {
               "path.to.foo": "1",
+           ...
+          },
+          </code>
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td><code>substitutions</code></td>
+      <td>
+        <code>Dictionary from strings to strings, optional</code>
+        <p>Raw substitution of the value of a given document key.</p>
+        <p>This field supports stamp variables.</p>
+        <p>
+          <code>
+            substitutions = {
+              "path.to.foo": "{BUILD_TIMESTAMP}",
+              "path.to.bar": "20.02.02",
            ...
           },
           </code>

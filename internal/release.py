@@ -38,11 +38,8 @@ def read_field(dictionary, path):
         if key in current:
             current = current.get(key)
         else:
-            try:
-                raise NameError('KeyNotExists')
-            except NameError:
-                print("The key '%s' not existe in dictionary:\n'%s'" % (path, dictionary))
-                raise
+            raise Exception('The key "%s" not existe in dictionary:\n%s' % (path, dictionary))
+
     return current
 
 def read_file_content(path):
@@ -91,8 +88,8 @@ def main():
 
             file_extension = _split_extension(read_file.name)[1]
 
-            objs=[]
-            yaml_objects=[]
+            objs = []
+            yaml_objects = []
 
             if file_extension == ".json":
                 objs.append(json.loads(read_file.read()))
