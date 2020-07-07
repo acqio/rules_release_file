@@ -22,7 +22,7 @@ http_archive(
     sha256 = "ea23e5bf938b226327420752b33b1c29f218aa6b2e5a93a712203a8e23ed6636",
     strip_prefix = "rules_release_file-0.2",
     urls = [
-        "https://github.com/jullianow/rules_release_file/archive/v0.2.tar.gz"
+        "https://github.com/acqio/rules_release_file/archive/v0.2.tar.gz"
     ],
 )
 
